@@ -5,3 +5,10 @@ Rewritten Deep Embedded Clustering (DEC) and Improved DEC (IDEC) algorithms for 
 * Dockerize
 * docs
 * tuning
+* docs
+
+# References
+- original caffe
+- paper keras
+- pt dec
+- pytorch lightning
