@@ -6,7 +6,7 @@ Original papers:
 - IDEC [Improved Deep Embedded Clustering with Local Structure Preservation (2017) by Xifeng Guo et al.](https://www.researchgate.net/publication/317095655_Improved_Deep_Embedded_Clustering_with_Local_Structure_Preservation)
 
 # Results
-Perfomance of the algortihms was tested on the MNIST. Cluster accuracy achieves around 85% (Hungarian algorithm, see [scipy desc](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linear_sum_assignment.html)) and depends to accuracy of initially generated centroids (kmeans on the encoder outputs)
+Perfomance of the algortihms was tested on the MNIST. Cluster accuracy achieves around 85% (Hungarian algorithm, see [scipy desc](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linear_sum_assignment.html)) and highly depends on accuracy of initially generated centroids (kmeans on the encoder outputs)
 ## DEC
 confm1
 
