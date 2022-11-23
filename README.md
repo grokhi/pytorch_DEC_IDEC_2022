@@ -22,5 +22,5 @@ confm2
 # TODO
 * Dockerize
 * docs
-* tuning
+* IDEC loss tuning
 * .py files
