@@ -1,5 +1,5 @@
 # PyTorch DEC/IDEC (2022)
-Rewritten Deep Embedded Clustering (DEC) and Improved DEC (IDEC) algorithms for the current version of pytorch. Obtained code was implemented then for the purposes of text feature extraction. (See [this paper](https://journalofbigdata.springeropen.com/articles/10.1186/s40537-022-00564-9#:~:text=Based%20on%20the%20results%2C%20BERT,that%20positions%20similar%20texts%20closer.) for details). See notebook for full code and plots.
+Rewritten Deep Embedded Clustering (DEC) and Improved DEC (IDEC) algorithms for the current version of pytorch. Obtained code was implemented then for the purposes of text feature extraction. (See [this paper](https://journalofbigdata.springeropen.com/articles/10.1186/s40537-022-00564-9#:~:text=Based%20on%20the%20results%2C%20BERT,that%20positions%20similar%20texts%20closer.) for details). See .ipynb notebook for full code and plots.
 
 Original papers: 
 - DEC [Unsupervised Deep Embedding for Clustering Analysis (2016) by Junyuan Xie et al.](https://arxiv.org/abs/1511.06335) 
