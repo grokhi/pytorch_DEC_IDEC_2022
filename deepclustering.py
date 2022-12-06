@@ -12,13 +12,16 @@ class ClusterAssignment(nn.Module):
         centroids: torch.tensor = None,
     ):
         """ 
-        student t-distribution, as same as used in t-SNE algorithm.
-                    q_ij = 1/(1+dist(x_i, u_j)^2), then normalize it.
+        Module to handle the soft assignment, for a description see in 3.1.1. in Xie/Girshick/Farhadi,
+        where the Student's t-distribution is used measure similarity between feature vector and each
+        cluster centroid.
+
         Arguments:
-            num_cluster: 
-            hidden_dim: 
-            alpha:
-            centroids:
+            num_cluster (int): number of clusters
+            hidden_dim (int): dimension of bottleneck layer 
+            alpha (float): parameter representing the degrees of freedom in the t-distribution, default 1.0 
+            centroids: clusters centers to initialise, if None then use Xavier uniform
+
         Return:
             q: student's t-distribution, or soft labels for each sample. shape=(n_samples, n_clusters)
         """
@@ -48,6 +51,28 @@ class ClusterAssignment(nn.Module):
 
 
 class DEC(nn.Module):
+    '''
+    DEC algorithm implementation. 
+    Read Unsupervised Deep Embedding for Clustering Analysis (2016) by Junyuan Xie et al. for details.
+
+    Arguments:
+        autoencoder (nn.Module): autoencoder to use
+        n_clusters (int): number of clusters
+        alpha (float): parameter representing the degrees of freedom in the t-distribution, default 1.0 
+        centroids: clusters centers to initialise
+
+    Main attributes:
+        encoder (nn.Module): pretrained encoder which will be used for cluster assignment
+        assignment (nn.Module): soft cluster assignment with shape == (batch_size, hid_dim, n_clusters)
+        kmeans (KMeans): need for initial cluster initialization
+
+    Methods:
+        get_target_distribution: get t-disributiion as described in Xie et al. (2016)
+        forward: compute cluster assignment
+
+    Return:
+        Soft cluster assignment (batch_size, hid_dim, n_clusters)
+    '''
     def __init__(
         self, 
         autoencoder: nn.Module,
@@ -55,9 +80,6 @@ class DEC(nn.Module):
         alpha: float = 1.0,
         centroids = None,
     ):
-        '''
-        Deep Embedded Clustering
-        '''
         super().__init__()
         self.encoder = autoencoder.encoder
         self.n_clusters = n_clusters
@@ -72,6 +94,13 @@ class DEC(nn.Module):
         
 
     def forward(self, x):
+        '''
+        Compute the cluster assignment using the ClusterAssignment after running the batch
+        through the encoder part of the associated AutoEncoder module.
+
+        :x: [batch size, embedding dimension] FloatTensor
+        :return: [batch size, number of clusters] FloatTensor
+        '''
         return self.assignment(self.encoder(x))
 
     def get_target_distribution(self, q):
@@ -81,12 +110,35 @@ class DEC(nn.Module):
 
 
 class IDEC(DEC):
+    '''
+    IDEC algorithm implementation.
+    Read "Improved Deep Embedded Clustering with Local Structure Preservation" (2017) by Xifeng Guo et al. for details.
+
+    Arguments:
+        autoencoder (nn.Module): autoencoder to use
+        n_clusters (int): number of clusters
+        alpha (float): parameter representing the degrees of freedom in the t-distribution, default 1.0 
+        centroids: clusters centers to initialise
+
+    Main attributes:
+        encoder (nn.Module): pretrained encoder used for minimization of clustering loss 
+        decoder (nn.Module): pretrained decoder used for minimization of reconstruction loss 
+        assignment (nn.Module): 
+        kmeans (KMeans): need for initial cluster initialization
+
+    Methods:
+        get_target_distribution: get t-disributiion as described in Xie et al. (2016)
+        forward: compute cluster assignment
+
+    Returns:
+        forward: (soft cluster assignment, reconstructed embeddings)
+    '''    
     def __init__(
         self, 
         autoencoder: nn.Module,
         n_clusters: int = 10,
         alpha: float = 1.0,
-    ):    
+    ):
         super().__init__(
             autoencoder,
             n_clusters,
@@ -104,6 +156,11 @@ class IDEC(DEC):
 
 
 class IDEC_loss(nn.Module):
+    '''
+    IDEC loss used for optimization of DEC algorithm.
+    Read "Improved Deep Embedded Clustering with Local Structure Preservation" (2017) by Xifeng Guo et al. for details.
+
+    '''
     def __init__(self, gamma=.1):
         super().__init__();
         self.gamma = gamma

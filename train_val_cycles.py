@@ -13,9 +13,14 @@ def train(
     model, loader, optimizer, loss_fn, device,
     static_loader=False
 ):
+    '''
+    Presented train loop designed for models from StackedAutoEncoder, StackedDenoisingAutoEncoder,
+    DEC and IDEC classes.
+    '''
     model.train()
     model.to(device)
 
+    # cluster centers initialization
     if isinstance(model, DEC):
         if not model.initialized:
             xs = []
@@ -56,6 +61,7 @@ def train(
     outputs = []
     counter = 0
 
+    # main loop
     for x, y in tqdm(loader, desc='Train'):
         
         x, y = x.to(device), y.to(device)
@@ -103,7 +109,7 @@ def train(
 
     train_loss /= len(loader)
 
-
+    # return
     if isinstance(model, DEC):
         
         y = torch.cat(ys).cpu().numpy()
@@ -137,6 +143,10 @@ def train(
 def evaluate(
     model, loader, loss_fn, device
 ):
+    '''
+    Presented train loop designed for models from StackedAutoEncoder, StackedDenoisingAutoEncoder,
+    DEC and IDEC classes.
+    '''
     model.eval()
 
     eval_loss = 0
@@ -179,7 +189,7 @@ def evaluate(
 
     eval_loss /= len(loader)
 
-
+    # return
     if isinstance(model, DEC):
         with torch.no_grad():
             y = torch.cat(ys).cpu().numpy()

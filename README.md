@@ -20,5 +20,4 @@ confm2
 - [Another DEC (pytorch-lightning)](https://github.com/youngerous/dec-pytorch)
 
 # TODO
-* docs
 * conf matricies

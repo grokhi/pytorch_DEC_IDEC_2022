@@ -25,6 +25,19 @@ class Block(nn.Module):
         )
 
 class StackedAutoEncoder(nn.Module):
+    '''
+    Fully connected auto-encoder model, symmetric.
+
+    Arguments:
+        dims (list): list of number of units in each layer of encoder. dims[0] is input dims, dims[-1] is units in hidden layer.
+            The decoder is symmetric with encoder. So number of layers of the auto-encoder is 2*len(dims)-1
+        activation (nn.Module): activation function, not applied to Input, Hidden and Output layers
+        dropout_value (float): dropout value mostly used for controlling the learning curves
+        base_block (nn.Module): layer of neural net
+    
+    Return:
+        Model of autoencoder
+    '''
     def __init__(
         self,
         dims:list,
@@ -32,15 +45,7 @@ class StackedAutoEncoder(nn.Module):
         dropout_value:float = .0,
         base_block:nn.Module = Block,
     ):
-        """
-        Fully connected auto-encoder model, symmetric.
-        Arguments:
-            dims: list of number of units in each layer of encoder. dims[0] is input dims, dims[-1] is units in hidden layer.
-                The decoder is symmetric with encoder. So number of layers of the auto-encoder is 2*len(dims)-1
-            act: activation, not applied to Input, Hidden and Output layers
-        return:
-            Model of autoencoder
-        """
+
         super().__init__()
         self.dims = dims
         self.inp_dim = dims[0]
@@ -65,7 +70,7 @@ class StackedAutoEncoder(nn.Module):
             base_block(self.hid_dim, dims[3], activation, dropout_value),
             base_block(dims[3], dims[2], activation, dropout_value),
             base_block(dims[2], dims[1], activation, dropout_value),
-            base_block(dims[1], self.inp_dim, nn.Identity, dropout_value), #nn.Identity f(x)==x
+            base_block(dims[1], self.inp_dim, nn.Identity, dropout_value), # nn.Identity is when f(x)==x
         ])
         
         self.decoder = nn.Sequential(*decoder_blocks)
@@ -109,6 +114,19 @@ class DenoisingBlock(Block):
 
 
 class StackedDenoisingAutoEncoder(StackedAutoEncoder):
+    '''
+    Fully connected auto-encoder model, symmetric.
+
+    Arguments:
+        dims (list): list of number of units in each layer of encoder. dims[0] is input dims, dims[-1] is units in hidden layer.
+            The decoder is symmetric with encoder. So number of layers of the auto-encoder is 2*len(dims)-1
+        activation (nn.Module): activation function, not applied to Input, Hidden and Output layers
+        dropout_value (float): dropout value mostly used for controlling the learning curves
+        base_block (nn.Module): layer of neural net
+        
+    Return:
+        Model of denoising autoencoder
+    '''
     def __init__(
         self, 
         dims:list, 
