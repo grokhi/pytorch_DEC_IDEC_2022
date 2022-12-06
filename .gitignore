@@ -1,8 +1,3 @@
-mnist/MNIST/raw/t10k-images-idx3-ubyte
-mnist/MNIST/raw/t10k-images-idx3-ubyte.gz
-mnist/MNIST/raw/t10k-labels-idx1-ubyte
-mnist/MNIST/raw/t10k-labels-idx1-ubyte.gz
-mnist/MNIST/raw/train-images-idx3-ubyte
-mnist/MNIST/raw/train-images-idx3-ubyte.gz
-mnist/MNIST/raw/train-labels-idx1-ubyte
-mnist/MNIST/raw/train-labels-idx1-ubyte.gz
+mnist/
+__pycache__
+DEC_IDEC_MNIST_fullcode.ipynb

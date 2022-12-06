@@ -20,7 +20,5 @@ confm2
 - [Another DEC (pytorch-lightning)](https://github.com/youngerous/dec-pytorch)
 
 # TODO
-* Dockerize
 * docs
-* IDEC loss tuning
-* .py files
+* conf matricies
