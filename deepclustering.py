@@ -130,7 +130,7 @@ class IDEC(DEC):
         get_target_distribution: get t-disributiion as described in Xie et al. (2016)
         forward: compute cluster assignment
 
-    Returns:
+    Return:
         forward: (soft cluster assignment, reconstructed embeddings)
     '''    
     def __init__(
