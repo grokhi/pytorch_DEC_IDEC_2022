@@ -3,6 +3,8 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
+from deepclustering import IDEC
+
 def cluster_acc(y_true, y_pred, reassign:bool = False):
     """
     Calculate clustering accuracy. Require scikit-learn installed
@@ -34,21 +36,44 @@ def cluster_acc(y_true, y_pred, reassign:bool = False):
     else:
         return cluster_accuracy
 
-def predict_cluster_accuracy(model, loader, device):
+@torch.inference_mode()
+def predict_cluster_accuracy(model, loader, device, reassigned:bool=False):
+    model.eval()
     model.to(device)
-    targets, predicted = [], []
+
+    targets, features, predicted = [], [], []
     for x, y in tqdm(loader, desc='Evaluate cluster accuracy'):
         x, y = x.to(device), y.to(device)
-        output = model(x)#.reshape(-1, 28*28))
+        x = x.reshape(-1, 28*28)
 
+        if type(model)==IDEC:
+            output = model(x)[0]
+        else:
+            output = model(x)
         y_pred = output.argmax(1)
 
         targets.append(y)
+        features.append(output)
         predicted.append(y_pred)
 
     targets = torch.cat(targets).cpu().numpy()
+    features = torch.cat(features).cpu().numpy()
     predicted = torch.cat(predicted).cpu().numpy()
 
-    reassignment, accuracy = cluster_acc(targets, predicted, reassign=True)
-    return (reassignment, accuracy, predicted)
+    
 
+    if reassigned:
+        reassignment_dict, accuracy = cluster_acc(targets, predicted, reassign=True)
+        return {
+            'accuracy': accuracy, 
+            'predicted': np.vectorize(reassignment_dict.get)(predicted),
+            'features': features,
+            'reassignment_dict': reassignment_dict
+        }
+    else:
+        accuracy = cluster_acc(targets, predicted, reassign=False)
+        return{
+            'accuracy': accuracy, 
+            'predicted': predicted,
+            'features': features
+        }
